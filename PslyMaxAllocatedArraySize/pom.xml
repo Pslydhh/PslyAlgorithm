@@ -1,0 +1,28 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   
+  <!-- 模型版本号 -->
+  <modelVersion>4.0.0</modelVersion> 
+  <!-- 群组ID: 公司域名反写 -->
+  <groupId>com.kiwi</groupId>
+  <!-- 项目ID: 一个公司只有一个域名，但是可以有多个项目 -->
+  <artifactId>One</artifactId>
+  <!-- 版本号: 用于描述开发过程的阶段性标识-->
+  <version>0.0.1-SNAPSHOT</version>
+ 
+  <!-- 默认字符集 -->
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+ 
+ <!-- 依赖管理 -->
+  <dependencies>
+        <!-- 具体的依赖 -->
+        <dependency>
+              <groupId>junit</groupId>
+              <artifactId>junit</artifactId>
+              <version>4.9</version>
+              <scope>test</scope>
+        </dependency>
+  </dependencies>
+</project>
