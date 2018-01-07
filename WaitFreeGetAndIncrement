@@ -232,7 +232,7 @@ public class WaitFreeAtomic {
             valueObj_ = valueObj;
         }
         valueObj_ = wrapperObj.value;
-    //    helpValueTransfer(valueObj_);
+        helpValueTransfer(valueObj_);
         //返回锚定的valueObj。
         return valueObj_;
     }
