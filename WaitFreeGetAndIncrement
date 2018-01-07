@@ -161,22 +161,23 @@ public class WaitFreeAtomic {
 	}
 	
     public static int getAndIncrement(int index) {
-        StateObj myState = states[index];
-        //前进一步，每assistStep，尝试一个帮助。
-        if(((++myState.steps) & myState.assistStep) == 0){
-            long helpThread = myState.index;
-            help(helpThread);
-            //下一个协助的对象。
-            ++myState.index;
-        }
         //fast-path， 最多MAX次。
         int count = MAX;
         for(;;) {
             ValueObj valueObj_ = valueObj;
             if(valueObj_.threadObj == null) {
                 ValueObj valueObjNext = new ValueObj(valueObj_.value + 1, null);
-                if(casValueObj(valueObj_, valueObjNext))
+                if(casValueObj(valueObj_, valueObjNext)) {
+                    StateObj myState = states[index];
+                    //前进一步，每assistStep，尝试一个帮助。
+                    if(((++myState.steps) & myState.assistStep) == 0){
+                        long helpThread = myState.index;
+                        help(helpThread);
+                        //下一个协助的对象。
+                        ++myState.index;
+                    }
                     return valueObj_.value;
+                }
                 Thread.yield();Thread.yield();Thread.yield();Thread.yield();
             } else {
                 helpTransfer(valueObj_);
