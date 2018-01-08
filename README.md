@@ -13,7 +13,7 @@ WaitFreeGetAndIncrement.java: 一个无等待的原子加一的实现（相对�
 
 WaitFreeQueueFastPath.java: 一个无等待的并发队列；（相对于经典的无锁MSQueue.）
 
-LockFreeLinkedListWithRefCount.java: 统计reference个数的在线工具，版本一（java实现）
+LockFreeLinkedListWithRefCount.java: 统计reference个数的在线工具，版本一（java实现），附带main函数用于测试
 
-LockFreeLinkedListWithRefCount2.java: 统计reference个数的在线工具，版本二（java实现）
+LockFreeLinkedListWithRefCount2.java: 统计reference个数的在线工具，版本二（java实现），附带main函数用于测试
 
