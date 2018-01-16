@@ -1,4 +1,6 @@
 # PslyAlgorithm
+old blog: http://blog.csdn.net/luoyuyou
+cur blog: https://segmentfault.com/blog/psly
 Here are some of the concurrent code I wrote
 
     public final int getAndIncrement() {
