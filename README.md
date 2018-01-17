@@ -13,9 +13,9 @@ Here are some of the concurrent code I wrote
                 return current;
         }
     }
-WaitFreeGetAndIncrement.java: 一个无等待的原子加一的实现（相对于以上这个无锁的实现）；
+WaitFreeGetAndIncrement.java: 一个无等待的原子加一的实现（相对于以上这个无锁的实现）
 
-WaitFreeQueueFastPath.java: 一个无等待的并发队列；（相对于经典的无锁MSQueue.）
+WaitFreeQueueFastPath.java: 一个无等待的并发队列；（基于经典的无锁MSQueue）
 
 LockFreeLinkedListWithRefCount.java: 统计reference个数的在线工具，版本一（java实现），附带main函数用于测试
 
