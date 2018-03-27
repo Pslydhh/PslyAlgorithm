@@ -15,7 +15,7 @@ Here are some of the concurrent code I wrote
     }
 WaitFreeGetAndIncrement.java： wait-free atomic counter based on cas (Compared to the one above's lock-free Atomic)
 
-WaitFreeQueueFastPath.java： wait-free mpmc Queue；（Based on the classic's MSQueue, and Make a modification on http://www.cs.technion.ac.il/~erez/Papers/wf-methodology-ppopp12.pdf）
+WaitFreeQueueFastPath.java： wait-free mpmc Queue；（Based on the classic's MSQueue, and Make a modification on http://www.cs.technion.ac.il/~erez/Papers/wf-methodology-ppopp12.pdf ）
 
 LockFreeLinkedListWithRefCount.java： An tool for statistical reference counters, version 1 (Java implementation)，with main function to test
 
