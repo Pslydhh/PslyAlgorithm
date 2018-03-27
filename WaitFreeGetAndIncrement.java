@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import sun.misc.Unsafe;
 
-public class WaitFreeAtomic {
+public class WaitFreeGetAndIncrement {
 	public final static int N = 8;
 	public final static int loops = 12500000;
 	public static int MAX = N;
@@ -70,7 +70,7 @@ public class WaitFreeAtomic {
 				}
 			}
 			System.out.println("wrongTimes: " + errTimes + " MAX-COST-TIMES: " + (costTimeMax / 1000.0) + " maxInteger: " + maxInteger.get());
-			System.out.println("times " + (++k) + " costTime: " + ((System.currentTimeMillis() - start) / 1000.0) + " seconds" + " maxT: " + maxT);
+			System.out.println("times " + (++k) + " costTime: " + ((System.currentTimeMillis() - start) / 1000.0) + " seconds" + " maxT: " + maxT + " milliseconds");
 			Thread.sleep(1000);
 		}
 	}
@@ -108,8 +108,8 @@ public class WaitFreeAtomic {
 	static {
 		try {
 			UNSAFE = UtilUnsafe.getUnsafe();
-			valueObjOffset = UNSAFE.staticFieldOffset(WaitFreeAtomic.class.getDeclaredField("valueObj"));
-			valueBase = UNSAFE.staticFieldBase(WaitFreeAtomic.class.getDeclaredField("valueObj"));
+			valueObjOffset = UNSAFE.staticFieldOffset(WaitFreeGetAndIncrement.class.getDeclaredField("valueObj"));
+			valueBase = UNSAFE.staticFieldBase(WaitFreeGetAndIncrement.class.getDeclaredField("valueObj"));
 
 			_Obase = UNSAFE.arrayBaseOffset(ThreadObj[].class);
 			_Oscale = UNSAFE.arrayIndexScale(ThreadObj[].class);
