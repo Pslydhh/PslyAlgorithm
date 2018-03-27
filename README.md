@@ -33,5 +33,5 @@ UnsafeSupport.java： Provide available Unsafe。
 
 TestForMultiverse.java： A use case that runs Multiverse (software transaction memory)。
 
-LockFreeLinkedList.java： The famous Harris's List, lock-free List
+LockFreeLinkedList.java： The famous Harris's List, lock-free List. paper: https://www.microsoft.com/en-us/research/wp-content/uploads/2001/10/2001-disc.pdf
 
