@@ -1,28 +1,37 @@
 package com.psly;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import sun.misc.Unsafe;
 
 public class WaitFreeAtomic {
-	public final static int N = 1000;
-	public final static int loops = 100000;
-	public final static int MAX = 64;
+	public final static int N = 8;
+	public final static int loops = 12500000;
+	public static int MAX = N;
+	public final static int STEPS = 0;
 	public final static int bigYields = 32;
+	public final static AtomicInteger inter= new AtomicInteger();
+	public final static Map<Integer, Integer> mapMaxTims = new HashMap<Integer, Integer>();
 	public final static int[] ints = new int[N * loops];
-//	private final static AtomicInteger inter = new AtomicInteger();
 	public static void main(String[] args) throws InterruptedException {
 		int errTimes = 0;
-		for(int k = 0; ;) {
+		long maxT = 0;
+		for(int k = 0; k < 4096;) {
+			atomicInteger.set(0);
+			ato.set(0);
 			valueObj = new ValueObj(0, null);
 			for(int j = 0; j < N * loops; ++j) 
 				ints[j] = 0;
 			final CountDownLatch latch = new CountDownLatch(1);
 			Thread[] threads = new Thread[N];
+			long[] times = new long[N];
 			for(int i = 0; i < N; ++i) {
-				threadObjs[i] = new ThreadObj(null);
-				states[i] = new StateObj(1);
+	//			threadObjs[i] = new ThreadObj(null);
+				states[i] = new StateObj(STEPS);
 				int threadId = i;
 				(threads[i] = new Thread(){
 					public void run(){
@@ -33,15 +42,26 @@ public class WaitFreeAtomic {
 							e.printStackTrace();
 						}
 						
-						for(int j = 0; j < loops; ++j)
-							ints[getAndIncrement(threadId)] = 1;
+						for(int j = 0; j < loops; ++j) {
+							long start = System.currentTimeMillis();
+							ints[getAndIncrement(threadId, 1)] = 1;
+							long costTime = System.currentTimeMillis() - start;
+							if(costTime > times[threadId])
+								times[threadId] = costTime;
+						}
 					}
 				}).start();
 			}
 			long start =System.currentTimeMillis();
 			latch.countDown();
+			long costTimeMax = 0;
 			for(Thread thread: threads)
 				thread.join();
+			for(int i = 0; i < N; ++i)
+				if(times[i] > costTimeMax)
+					costTimeMax = times[i];
+			if(costTimeMax > maxT)
+				maxT = costTimeMax;
 			System.out.println("\n" + valueObj.value);
 			for(int j = 0; j < N * loops; ++j) {
 				if(ints[j] != 1) {
@@ -49,8 +69,8 @@ public class WaitFreeAtomic {
 					++errTimes;
 				}
 			}
-			System.out.println("wrongTimes: " + errTimes);
-			System.out.println("times " + (++k) + " costTime: " + ((System.currentTimeMillis() - start) / 1000.0) + " seconds");
+			System.out.println("wrongTimes: " + errTimes + " MAX-COST-TIMES: " + (costTimeMax / 1000.0) + " maxInteger: " + maxInteger.get());
+			System.out.println("times " + (++k) + " costTime: " + ((System.currentTimeMillis() - start) / 1000.0) + " seconds" + " maxT: " + maxT);
 			Thread.sleep(1000);
 		}
 	}
@@ -104,32 +124,25 @@ public class WaitFreeAtomic {
 	}
 	
 	static class ThreadObj {
-		public ThreadObj(WrapperObj wrapObj) {
+		public ThreadObj(ValueObj valueObj, int add) {
 			super();
-			this.wrapperObj = wrapObj;
+			this.valueObj = valueObj;
+			this.add = add;
 		}
 		
-		WrapperObj wrapperObj;
+		ValueObj valueObj;
 		long[] longs = new long[16];
-		static final class WrapperObj {
-			final ValueObj value;
-			final boolean isFinish;
-			public WrapperObj(ValueObj value, boolean isFinish) {
-				super();
-				this.value = value;
-				this.isFinish = isFinish;
-			}
+		final int add;
+		void casValueObj(ValueObj val) {
+			UNSAFE.compareAndSwapObject(this, valueObjOffset, null, val);
 		}
 		
-		boolean casWrapValue(WrapperObj cmp, WrapperObj val) {
-			return UNSAFE.compareAndSwapObject(this, wrapValueOffset, cmp, val);
-		}
 		private static final sun.misc.Unsafe UNSAFE;
-		private static final long wrapValueOffset;
+		private static final long valueObjOffset;
 		static {
 			try {
 				UNSAFE = UtilUnsafe.getUnsafe();
-				wrapValueOffset = UNSAFE.objectFieldOffset(ThreadObj.class.getDeclaredField("wrapperObj"));
+				valueObjOffset = UNSAFE.objectFieldOffset(ThreadObj.class.getDeclaredField("valueObj"));
 			} catch (Exception e) {
 				throw new Error(e);
 			}
@@ -160,13 +173,33 @@ public class WaitFreeAtomic {
 		
 	}
 	
-    public static int getAndIncrement(int index) {
+	public static AtomicInteger ato = new AtomicInteger();
+	public static int getAndIncrementFast(int index) {
+		//Thread.yield();
+		return ato.getAndIncrement();
+	}
+	
+	private static AtomicInteger atomicInteger = new AtomicInteger();
+	private static AtomicInteger maxInteger = new AtomicInteger();
+	public static int getAndIncrementFast2(int index) {
+		int curr;
+		for(;;) {
+			curr = atomicInteger.get();
+			if(atomicInteger.compareAndSet(curr, curr + 1))
+				break;
+			Thread.yield();
+		} 
+
+		return curr;
+	}
+	
+    public static int getAndIncrement(int index, int add) {
         //fast-path， 最多MAX次。
         int count = MAX;
         for(;;) {
             ValueObj valueObj_ = valueObj;
             if(valueObj_.threadObj == null) {
-                ValueObj valueObjNext = new ValueObj(valueObj_.value + 1, null);
+                ValueObj valueObjNext = new ValueObj(valueObj_.value + add, null);
                 if(casValueObj(valueObj_, valueObjNext)) {
                     StateObj myState = states[index];
                     //前进一步，每assistStep，尝试一个帮助。
@@ -178,7 +211,7 @@ public class WaitFreeAtomic {
                     }
                     return valueObj_.value;
                 }
-                Thread.yield();Thread.yield();Thread.yield();Thread.yield();
+                Thread.yield();Thread.yield();
             } else {
                 helpTransfer(valueObj_);
             }
@@ -187,11 +220,12 @@ public class WaitFreeAtomic {
                 break;
         }
 //        System.out.println("here " + inter.incrementAndGet());
+//        inter.incrementAndGet();
         for(int j = 0; j < bigYields; ++j)
             Thread.yield();
         
         //slow-path，将自己列为被帮助对象。
-        ThreadObj myselfObj = new ThreadObj(new ThreadObj.WrapperObj(null, false));
+        ThreadObj myselfObj = new ThreadObj(null, add);
         setThreadObj(index, myselfObj);
         //开始帮助自己
         ValueObj result = help(index);
@@ -211,12 +245,11 @@ public class WaitFreeAtomic {
     private static ValueObj help(long helpIndex) {
         helpIndex = helpIndex % N;
         ThreadObj helpObj = getThreadObj(helpIndex);
-        ThreadObj.WrapperObj wrapperObj;
-        if(helpObj == null || helpObj.wrapperObj == null)
+        if(helpObj == null/* || helpObj.valueObj != null*/)
             return null;
         //判定句，是否该线程对应的操作未完成，(先取valueObj，再取isFinish，这很重要)。
         ValueObj valueObj_ = valueObj;
-        while(!(wrapperObj = helpObj.wrapperObj).isFinish) {
+        while(helpObj.valueObj == null) {
             /*ValueObj valueObj_ = valueObj;*/
             if(valueObj_.threadObj == null) {
                 ValueObj intermediateObj = new ValueObj(valueObj_.value, helpObj);
@@ -232,26 +265,25 @@ public class WaitFreeAtomic {
             helpTransfer(valueObj_);
             valueObj_ = valueObj;
         }
-        valueObj_ = wrapperObj.value;
+        valueObj_ = helpObj.valueObj;
         helpValueTransfer(valueObj_);
         //返回锚定的valueObj。
         return valueObj_;
     }
     
     private static void helpTransfer(ValueObj valueObj_) {
-        ThreadObj.WrapperObj wrapperObj = valueObj_.threadObj.wrapperObj;
+        ThreadObj threadObj = valueObj_.threadObj;
         //step2: 先完成ThreadObj的状态迁移，WrapperObj(valueObj，true)分别表示(值，完成)，原子地将这两个值喂给threadObj。
-        if(!wrapperObj.isFinish) {
-            ThreadObj.WrapperObj wrapValueFiniash = new ThreadObj.WrapperObj(valueObj_, true);
-            valueObj_.threadObj.casWrapValue(wrapperObj, wrapValueFiniash);
-        }
+        if(threadObj.valueObj == null)
+             threadObj.casValueObj(valueObj_);
+        
         //step3: 最后完成ValueObj上的状态迁移
         helpValueTransfer(valueObj_);
     }
     
     private static ValueObj helpValueTransfer(ValueObj valueObj_) {
         if(valueObj_ == valueObj) {
-            ValueObj valueObjNext = new ValueObj(valueObj_.value + 1, null);
+            ValueObj valueObjNext = new ValueObj(valueObj_.value + valueObj_.threadObj.add, null);
             casValueObj(valueObj_, valueObjNext);
         }
         return valueObj_;
