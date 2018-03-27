@@ -71,7 +71,7 @@ public class WaitFreeGetAndIncrement {
 			}
 			System.out.println("wrongTimes: " + errTimes + " MAX-COST-TIMES: " + (costTimeMax / 1000.0) + " maxInteger: " + maxInteger.get());
 			System.out.println("times " + (++k) + " costTime: " + ((System.currentTimeMillis() - start) / 1000.0) + " seconds" + " maxT: " + maxT + " milliseconds");
-			Thread.sleep(1000);
+			Thread.sleep(2000);
 		}
 	}
 	final static boolean casValueObj(ValueObj cmp, ValueObj val) {
