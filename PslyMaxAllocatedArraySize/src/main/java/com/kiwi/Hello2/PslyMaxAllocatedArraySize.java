@@ -17,7 +17,7 @@ public class PslyMaxAllocatedArraySize
 				Thread.sleep(2000L);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				e.printStackTrace(); 
 			}
 	    }
 }
