@@ -23,7 +23,7 @@ public class LockFreeLinkedListWithRefCount {
 	static int PSLY_Record_NEXTIDXBIT  = ((1 << idxNum) - 1);  
 	             
 	static int PSLY_Record_NEXTTAILNUM = 1;   
-	static int PSLY_Record_NEXTTAILBIT = (((1 << 1) - 1) << idxNum);   
+	static int PSLY_Record_NEXTTAILBIT = (((1 << 1) - 1) << idxNum);  
 	   
 	static int PSLY_Record_NEXTVERSIONNUM = (32 - 1 - idxNum);      
 	static int PSLY_Record_NEXTVERSIONBIT = ((~0)^((((1 << 1) - 1) << idxNum) | ((1 << idxNum) - 1)));  
