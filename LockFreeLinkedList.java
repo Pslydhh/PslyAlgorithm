@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 
 import sun.misc.Unsafe;
 
-public class LockFreeLinkedList<E extends Comparable<E>> {
+public class LockFreeLinkedList<E extends Comparable<E>> { 
 	
 	public LockFreeLinkedList() {
 		super();
