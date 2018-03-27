@@ -5,31 +5,31 @@ cur blog: https://segmentfault.com/blog/psly
 
 Here are some of the concurrent code I wrote
 
-    public final int getAndIncrement() {
+    public final int getAndIncrement(int add) {
         for (;;) {
             int current = get();
-            int next = current + 1;
+            int next = current + add;
             if (compareAndSet(current, next))
                 return current;
         }
     }
-WaitFreeGetAndIncrement.java: 一个无等待的原子加一的实现（相对于以上这个无锁的实现）
+WaitFreeGetAndIncrement.java: wait-free atomic counter based on cas (Compared to the one above's lock-free Atomic)
 
-WaitFreeQueueFastPath.java: 一个无等待的并发队列；（基于经典的无锁MSQueue）
+WaitFreeQueueFastPath.java: wait-free mpmc Queue；（Based on the classic's MSQueue, and Make a modification on http://www.cs.technion.ac.il/~erez/Papers/wf-methodology-ppopp12.pdf）
 
-LockFreeLinkedListWithRefCount.java: 统计reference个数的在线工具，版本一（java实现），附带main函数用于测试
+LockFreeLinkedListWithRefCount.java: An tool for statistical reference counters, version 1 (Java implementation)，with main function to test
 
-LockFreeLinkedListWithRefCount2.java: 统计reference个数的在线工具，版本二（java实现），附带main函数用于测试
+LockFreeLinkedListWithRefCount2.java:An tool for statistical reference counters, version 2 (Java implementation)，with main function to test
 
-LinkedTransferQueueFix.java: 这是为JDK中的LinkedTransferQueue增加了补丁之后的文件，修正了因节点的取消而丧失信号的问题。
+LinkedTransferQueueFix.java: This file has made a modification on LinkedTransferQueue in JDK as my patch, modifying the problem of losing the signal because of the node's cancellation。
 
-StampedLock.java：这是为JDK中的StampedLock增加了保存/恢复中断机制之后的文件，修正了原来的CPU占有问题，如果要测试，请注意其中使用的LockSupport.nextSecondarySeed等方法是包控制域。
+StampedLock.java：This file adds the preservation / recovery interrupt mechanism to StampedLock in JDK. It corrects the problem of Excessive occupancy of cpu. If you want to test, please note that the LockSupport.nextSecondarySeed used here is the package control domain.
 
-TestForStampedLock.java：用于测试StampedLock:当第一个读锁进入等待队列并且超时，那么链接它后面的读线程将会重新在队列中拼接，从而取得锁的顺序反转了（将源码中LockSupport.nextSecondarySeed注释掉）。
+TestForStampedLock.java：It is used to test StampedLock:. When the first read lock enters the waiting queue and timeout, then the read thread after it links will re join in the queue, so that the order of the lock is reversed. (the LockSupport.nextSecondarySeed in the source code should be annotated).
 
-ConcurrentLinkedQueue.java：对JUC中的这个类在poll和offer上进行了一点修改（注释中保留原代码），采用了和LinkedTransferQueue一样的思想。
+ConcurrentLinkedQueue.java：This take a little modification on ConcurrentLinkedQueue.java in JUC with poll method and offer method (retains the original code in the annotation) , uses the same idea as LinkedTransferQueue.
 
-UnsafeSupport.java：提供可用的Unsafe。
+UnsafeSupport.java：Provide available Unsafe。
 
-TestForMultiverse.java：一个运行Multiverse(软件事务内存)的用例。
+TestForMultiverse.java：A use case that runs Multiverse (software transaction memory)。
 
