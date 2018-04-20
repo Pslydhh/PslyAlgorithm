@@ -169,9 +169,10 @@ public class WaitFreeQueue<T> {
 		}
 		
 		cell = node.getCells(enqId & Node.CELLS_BIT);
-/*		if(cell == null) {
-			System.out.println((enqId >>> Node.RIght_shift) + " " + node.id);
-		}*/
+		if(cell == null) {
+			System.err.println((enqId >>> Node.RIght_shift) + " " + node.id);
+			System.exit(0);
+		}
 		cell.setVal(item);
 	}
 	
@@ -567,7 +568,7 @@ public class WaitFreeQueue<T> {
 		}
 	}
 	
-//	@Contended
+	@Contended
 	static class Cell<T> {
 		static final Enq<?> TOP_ENQ = new Enq<>(0, null);
 		static final Deq<?> TOP_DEQ = new Deq<>(0, 0);
