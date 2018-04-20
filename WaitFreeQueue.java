@@ -384,6 +384,11 @@ public class WaitFreeQueue<T> {
 			Node<T> node = dp = findCell(dp, idx, th);
 			Cell<T> c = node.getCells(idx & Node.CELLS_BIT);
 
+			if(c == null) {
+				System.err.println("Errr!");
+				System.exit(0);
+			}
+			
 			if(c.casDeq(null, deq) || c.deq == deq) {
 				deq.casIdx(idx, -idx);
 				return;
@@ -515,8 +520,8 @@ public class WaitFreeQueue<T> {
 		private static final int RIght_shift = 10;
 		private static final int CELLS_SIZE = 1 << RIght_shift;
 		private static final int CELLS_BIT = CELLS_SIZE - 1;
-		private static final int PUT_TIMES = 128;
-		private static final int POP_TIMES = 16;
+		private static final int PUT_TIMES = 1;
+		private static final int POP_TIMES = 1;
 		
 		@Contended
 		private Node<T> next;
