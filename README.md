@@ -5,6 +5,8 @@ old blog: http://blog.csdn.net/luoyuyou
 
 cur blog: https://segmentfault.com/blog/psly
 
+latest blog: https://zhuanlan.zhihu.com/c_145672944
+
 Here are some of the concurrent code I wrote
 
     public final int getAndIncrement(int add) {
