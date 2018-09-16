@@ -179,9 +179,9 @@ impl<T> Channel<T> {
     /// Writes a message into the channel.
     pub fn write(&self, _token: &mut Token, msg: T) {
         let guard = epoch::pin();
-		let backoff =&mut Backoff::new();
-		let mut bool = true;
-		
+        let backoff =&mut Backoff::new();
+        let mut bool = true;
+        
         // If it happen to retrieve stale value, we can get the right index along the `next` filed
         let mut tail_ptr = self.tail.block.load(Ordering::Acquire, &guard);
         let mut tail = unsafe { tail_ptr.deref() };
@@ -191,11 +191,11 @@ impl<T> Channel<T> {
         // Otherwise, the tail's start_index may exceed tail_index...
         // and we can't reach right block, it was a disaster.
         let tail_index = self.tail.index.fetch_add(1, Ordering::Relaxed);
-		let mut count = 0;
-		
+        let mut count = 0;
+        
         // loop just for link next block, not for compare_exchange_weak...
         loop {
-			count += 1;
+            count += 1;
             // Calculate the index of the corresponding distance from this block's start.
             let offset = tail_index.wrapping_sub(tail.start_index);
 
@@ -211,38 +211,38 @@ impl<T> Channel<T> {
                     (*slot).msg.get().write(ManuallyDrop::new(msg));
                     (*slot).ready.store(true, Ordering::Release);
                 }
-				if count > 32 {
-					println!("{:?}", count);
-				}
+                if count > 32 {
+                    println!("{:?}", count);
+                }
                 break;
                 // Now, no longer need backoff.
             } else {
-				backoff.step();
+                backoff.step();
                 // we can help to add next block ( next.start_index = tail.start_index + BLOCK_CAP ) instead of spinning.
                 self.link_next_block(tail_ptr, tail, tail.start_index + BLOCK_CAP, &guard);
 
-				if bool {
-					let mut tail_cur2 = tail;
-					let mut i: usize;
-					for i in 0..8 {
-						let tail_cur = unsafe { self.tail.block.load(Ordering::Acquire, &guard).deref() };
-						if tail_index >= tail_cur.start_index {
-							tail_cur2 = tail_cur;
-							backoff.step();
-						} else {
-							bool = false;
-							break;
-						}
-					}
-					if tail_cur2.start_index != tail.start_index {
-						tail = tail_cur2;
-						continue;
-					}
-				}
-				
-				// Just along the `next` field to get the right block.
-				tail_ptr = tail.next.load(Ordering::Acquire, &guard);
-				tail = unsafe { tail_ptr.deref() };
+                if bool {
+                    let mut tail_cur2 = tail;
+                    let mut i: usize;
+                    for i in 0..8 {
+                        let tail_cur = unsafe { self.tail.block.load(Ordering::Acquire, &guard).deref() };
+                        if tail_index >= tail_cur.start_index {
+                            tail_cur2 = tail_cur;
+                            backoff.step();
+                        } else {
+                            bool = false;
+                            break;
+                        }
+                    }
+                    if tail_cur2.start_index != tail.start_index {
+                        tail = tail_cur2;
+                        continue;
+                    }
+                }
+                
+                // Just along the `next` field to get the right block.
+                tail_ptr = tail.next.load(Ordering::Acquire, &guard);
+                tail = unsafe { tail_ptr.deref() };
             }
         }
 
