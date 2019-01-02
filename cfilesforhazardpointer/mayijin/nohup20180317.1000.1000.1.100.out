@@ -1,0 +1,1105 @@
+nohup: ignoring input
+Sat Mar 17 02:18:28 2018
+
+1000 threads, 1000 times/thread, 100 iterators
+
+
+0 times
+
+1000000 enqueues + 1000000 dequeues
+
+begin father collect garbage
+time_use is 3.999822s, err num is 0 
+timeTotal is 8.961824s
+the rest: 0
+Sat Mar 17 02:18:37 2018
+
+
+1 times
+
+2000000 enqueues + 2000000 dequeues
+
+begin father collect garbage
+time_use is 5.700109s, err num is 0 
+timeTotal is 14.661966s
+the rest: 0
+Sat Mar 17 02:18:42 2018
+
+
+2 times
+
+3000000 enqueues + 3000000 dequeues
+
+begin father collect garbage
+time_use is 4.309411s, err num is 0 
+timeTotal is 19.145096s
+the rest: 0
+Sat Mar 17 02:18:47 2018
+
+
+3 times
+
+4000000 enqueues + 4000000 dequeues
+
+begin father collect garbage
+time_use is 4.707078s, err num is 0 
+timeTotal is 23.852385s
+the rest: 0
+Sat Mar 17 02:18:52 2018
+
+
+4 times
+
+5000000 enqueues + 5000000 dequeues
+
+begin father collect garbage
+time_use is 4.225941s, err num is 0 
+timeTotal is 28.078436s
+the rest: 0
+Sat Mar 17 02:18:56 2018
+
+
+5 times
+
+6000000 enqueues + 6000000 dequeues
+
+begin father collect garbage
+time_use is 5.458778s, err num is 0 
+timeTotal is 33.540482s
+the rest: 0
+Sat Mar 17 02:19:01 2018
+
+
+6 times
+
+7000000 enqueues + 7000000 dequeues
+
+begin father collect garbage
+time_use is 3.885471s, err num is 0 
+timeTotal is 37.426022s
+the rest: 0
+Sat Mar 17 02:19:05 2018
+
+
+7 times
+
+8000000 enqueues + 8000000 dequeues
+
+begin father collect garbage
+time_use is 5.283329s, err num is 0 
+timeTotal is 42.709412s
+the rest: 0
+Sat Mar 17 02:19:11 2018
+
+
+8 times
+
+9000000 enqueues + 9000000 dequeues
+
+begin father collect garbage
+time_use is 4.656706s, err num is 0 
+timeTotal is 47.366173s
+the rest: 0
+Sat Mar 17 02:19:15 2018
+
+
+9 times
+
+10000000 enqueues + 10000000 dequeues
+
+begin father collect garbage
+time_use is 5.591049s, err num is 0 
+timeTotal is 52.957283s
+the rest: 0
+Sat Mar 17 02:19:21 2018
+
+
+10 times
+
+11000000 enqueues + 11000000 dequeues
+
+begin father collect garbage
+time_use is 4.599062s, err num is 0 
+timeTotal is 57.556408s
+the rest: 0
+Sat Mar 17 02:19:25 2018
+
+
+11 times
+
+12000000 enqueues + 12000000 dequeues
+
+begin father collect garbage
+time_use is 3.984084s, err num is 0 
+timeTotal is 61.540558s
+the rest: 0
+Sat Mar 17 02:19:29 2018
+
+
+12 times
+
+13000000 enqueues + 13000000 dequeues
+
+begin father collect garbage
+time_use is 4.279476s, err num is 0 
+timeTotal is 65.820091s
+the rest: 0
+Sat Mar 17 02:19:34 2018
+
+
+13 times
+
+14000000 enqueues + 14000000 dequeues
+
+begin father collect garbage
+time_use is 4.577435s, err num is 0 
+timeTotal is 70.397591s
+the rest: 0
+Sat Mar 17 02:19:38 2018
+
+
+14 times
+
+15000000 enqueues + 15000000 dequeues
+
+begin father collect garbage
+time_use is 5.376196s, err num is 0 
+timeTotal is 75.773872s
+the rest: 0
+Sat Mar 17 02:19:44 2018
+
+
+15 times
+
+16000000 enqueues + 16000000 dequeues
+
+begin father collect garbage
+time_use is 6.724815s, err num is 0 
+timeTotal is 82.528320s
+the rest: 0
+Sat Mar 17 02:19:50 2018
+
+
+16 times
+
+17000000 enqueues + 17000000 dequeues
+
+begin father collect garbage
+time_use is 4.776242s, err num is 0 
+timeTotal is 87.304672s
+the rest: 0
+Sat Mar 17 02:19:55 2018
+
+
+17 times
+
+18000000 enqueues + 18000000 dequeues
+
+begin father collect garbage
+time_use is 5.879368s, err num is 0 
+timeTotal is 93.184250s
+the rest: 0
+Sat Mar 17 02:20:01 2018
+
+
+18 times
+
+19000000 enqueues + 19000000 dequeues
+
+begin father collect garbage
+time_use is 4.349589s, err num is 0 
+timeTotal is 97.534035s
+the rest: 0
+Sat Mar 17 02:20:05 2018
+
+
+19 times
+
+20000000 enqueues + 20000000 dequeues
+
+begin father collect garbage
+time_use is 4.354264s, err num is 0 
+timeTotal is 101.888512s
+the rest: 0
+Sat Mar 17 02:20:10 2018
+
+
+20 times
+
+21000000 enqueues + 21000000 dequeues
+
+begin father collect garbage
+time_use is 4.251823s, err num is 0 
+timeTotal is 106.140442s
+the rest: 0
+Sat Mar 17 02:20:14 2018
+
+
+21 times
+
+22000000 enqueues + 22000000 dequeues
+
+begin father collect garbage
+time_use is 4.106806s, err num is 0 
+timeTotal is 110.247368s
+the rest: 0
+Sat Mar 17 02:20:18 2018
+
+
+22 times
+
+23000000 enqueues + 23000000 dequeues
+
+begin father collect garbage
+time_use is 4.628605s, err num is 0 
+timeTotal is 114.876228s
+the rest: 0
+Sat Mar 17 02:20:23 2018
+
+
+23 times
+
+24000000 enqueues + 24000000 dequeues
+
+begin father collect garbage
+time_use is 5.927381s, err num is 0 
+timeTotal is 120.803688s
+the rest: 0
+Sat Mar 17 02:20:29 2018
+
+
+24 times
+
+25000000 enqueues + 25000000 dequeues
+
+begin father collect garbage
+time_use is 4.488141s, err num is 0 
+timeTotal is 125.291908s
+the rest: 0
+Sat Mar 17 02:20:33 2018
+
+
+25 times
+
+26000000 enqueues + 26000000 dequeues
+
+begin father collect garbage
+time_use is 4.498438s, err num is 0 
+timeTotal is 129.790558s
+the rest: 0
+Sat Mar 17 02:20:38 2018
+
+
+26 times
+
+27000000 enqueues + 27000000 dequeues
+
+begin father collect garbage
+time_use is 4.315605s, err num is 0 
+timeTotal is 134.106384s
+the rest: 0
+Sat Mar 17 02:20:42 2018
+
+
+27 times
+
+28000000 enqueues + 28000000 dequeues
+
+begin father collect garbage
+time_use is 4.308344s, err num is 0 
+timeTotal is 138.414978s
+the rest: 0
+Sat Mar 17 02:20:46 2018
+
+
+28 times
+
+29000000 enqueues + 29000000 dequeues
+
+begin father collect garbage
+time_use is 4.257820s, err num is 0 
+timeTotal is 142.749313s
+the rest: 0
+Sat Mar 17 02:20:51 2018
+
+
+29 times
+
+30000000 enqueues + 30000000 dequeues
+
+begin father collect garbage
+time_use is 4.522812s, err num is 0 
+timeTotal is 147.272217s
+the rest: 0
+Sat Mar 17 02:20:55 2018
+
+
+30 times
+
+31000000 enqueues + 31000000 dequeues
+
+begin father collect garbage
+time_use is 4.307740s, err num is 0 
+timeTotal is 151.580185s
+the rest: 0
+Sat Mar 17 02:20:59 2018
+
+
+31 times
+
+32000000 enqueues + 32000000 dequeues
+
+begin father collect garbage
+time_use is 4.321724s, err num is 0 
+timeTotal is 155.901978s
+the rest: 0
+Sat Mar 17 02:21:04 2018
+
+
+32 times
+
+33000000 enqueues + 33000000 dequeues
+
+begin father collect garbage
+time_use is 5.571255s, err num is 0 
+timeTotal is 161.473312s
+the rest: 0
+Sat Mar 17 02:21:09 2018
+
+
+33 times
+
+34000000 enqueues + 34000000 dequeues
+
+begin father collect garbage
+time_use is 4.903665s, err num is 0 
+timeTotal is 166.377197s
+the rest: 0
+Sat Mar 17 02:21:14 2018
+
+
+34 times
+
+35000000 enqueues + 35000000 dequeues
+
+begin father collect garbage
+time_use is 4.617237s, err num is 0 
+timeTotal is 170.994659s
+the rest: 0
+Sat Mar 17 02:21:19 2018
+
+
+35 times
+
+36000000 enqueues + 36000000 dequeues
+
+begin father collect garbage
+time_use is 4.200256s, err num is 0 
+timeTotal is 175.194992s
+the rest: 0
+Sat Mar 17 02:21:23 2018
+
+
+36 times
+
+37000000 enqueues + 37000000 dequeues
+
+begin father collect garbage
+time_use is 4.502258s, err num is 0 
+timeTotal is 179.781754s
+the rest: 0
+Sat Mar 17 02:21:28 2018
+
+
+37 times
+
+38000000 enqueues + 38000000 dequeues
+
+begin father collect garbage
+time_use is 4.327229s, err num is 0 
+timeTotal is 184.109161s
+the rest: 0
+Sat Mar 17 02:21:32 2018
+
+
+38 times
+
+39000000 enqueues + 39000000 dequeues
+
+begin father collect garbage
+time_use is 3.754433s, err num is 0 
+timeTotal is 187.863663s
+the rest: 0
+Sat Mar 17 02:21:36 2018
+
+
+39 times
+
+40000000 enqueues + 40000000 dequeues
+
+begin father collect garbage
+time_use is 4.930114s, err num is 0 
+timeTotal is 192.793991s
+the rest: 0
+Sat Mar 17 02:21:41 2018
+
+
+40 times
+
+41000000 enqueues + 41000000 dequeues
+
+begin father collect garbage
+time_use is 5.532321s, err num is 0 
+timeTotal is 198.326401s
+the rest: 0
+Sat Mar 17 02:21:46 2018
+
+
+41 times
+
+42000000 enqueues + 42000000 dequeues
+
+begin father collect garbage
+time_use is 4.730392s, err num is 0 
+timeTotal is 203.065887s
+the rest: 0
+Sat Mar 17 02:21:51 2018
+
+
+42 times
+
+43000000 enqueues + 43000000 dequeues
+
+begin father collect garbage
+time_use is 4.256500s, err num is 0 
+timeTotal is 207.322495s
+the rest: 0
+Sat Mar 17 02:21:55 2018
+
+
+43 times
+
+44000000 enqueues + 44000000 dequeues
+
+begin father collect garbage
+time_use is 4.346459s, err num is 0 
+timeTotal is 211.725266s
+the rest: 0
+Sat Mar 17 02:22:00 2018
+
+
+44 times
+
+45000000 enqueues + 45000000 dequeues
+
+begin father collect garbage
+time_use is 4.480701s, err num is 0 
+timeTotal is 216.206192s
+the rest: 0
+Sat Mar 17 02:22:04 2018
+
+
+45 times
+
+46000000 enqueues + 46000000 dequeues
+
+begin father collect garbage
+time_use is 4.318065s, err num is 0 
+timeTotal is 220.524323s
+the rest: 0
+Sat Mar 17 02:22:08 2018
+
+
+46 times
+
+47000000 enqueues + 47000000 dequeues
+
+begin father collect garbage
+time_use is 4.390030s, err num is 0 
+timeTotal is 224.914581s
+the rest: 0
+Sat Mar 17 02:22:13 2018
+
+
+47 times
+
+48000000 enqueues + 48000000 dequeues
+
+begin father collect garbage
+time_use is 4.186377s, err num is 0 
+timeTotal is 229.101181s
+the rest: 0
+Sat Mar 17 02:22:17 2018
+
+
+48 times
+
+49000000 enqueues + 49000000 dequeues
+
+begin father collect garbage
+time_use is 4.060881s, err num is 0 
+timeTotal is 233.162262s
+the rest: 0
+Sat Mar 17 02:22:21 2018
+
+
+49 times
+
+50000000 enqueues + 50000000 dequeues
+
+begin father collect garbage
+time_use is 3.906476s, err num is 0 
+timeTotal is 237.068832s
+the rest: 0
+Sat Mar 17 02:22:25 2018
+
+
+50 times
+
+51000000 enqueues + 51000000 dequeues
+
+begin father collect garbage
+time_use is 4.064958s, err num is 0 
+timeTotal is 241.133865s
+the rest: 0
+Sat Mar 17 02:22:29 2018
+
+
+51 times
+
+52000000 enqueues + 52000000 dequeues
+
+begin father collect garbage
+time_use is 4.214744s, err num is 0 
+timeTotal is 245.348831s
+the rest: 0
+Sat Mar 17 02:22:33 2018
+
+
+52 times
+
+53000000 enqueues + 53000000 dequeues
+
+begin father collect garbage
+time_use is 4.810586s, err num is 0 
+timeTotal is 250.159546s
+the rest: 0
+Sat Mar 17 02:22:38 2018
+
+
+53 times
+
+54000000 enqueues + 54000000 dequeues
+
+begin father collect garbage
+time_use is 4.666880s, err num is 0 
+timeTotal is 254.826553s
+the rest: 0
+Sat Mar 17 02:22:43 2018
+
+
+54 times
+
+55000000 enqueues + 55000000 dequeues
+
+begin father collect garbage
+time_use is 4.589010s, err num is 0 
+timeTotal is 259.480499s
+the rest: 0
+Sat Mar 17 02:22:47 2018
+
+
+55 times
+
+56000000 enqueues + 56000000 dequeues
+
+begin father collect garbage
+time_use is 4.264240s, err num is 0 
+timeTotal is 263.744873s
+the rest: 0
+Sat Mar 17 02:22:52 2018
+
+
+56 times
+
+57000000 enqueues + 57000000 dequeues
+
+begin father collect garbage
+time_use is 5.227351s, err num is 0 
+timeTotal is 268.972412s
+the rest: 0
+Sat Mar 17 02:22:57 2018
+
+
+57 times
+
+58000000 enqueues + 58000000 dequeues
+
+begin father collect garbage
+time_use is 4.521471s, err num is 0 
+timeTotal is 273.494110s
+the rest: 0
+Sat Mar 17 02:23:01 2018
+
+
+58 times
+
+59000000 enqueues + 59000000 dequeues
+
+begin father collect garbage
+time_use is 3.926372s, err num is 0 
+timeTotal is 277.461884s
+the rest: 0
+Sat Mar 17 02:23:05 2018
+
+
+59 times
+
+60000000 enqueues + 60000000 dequeues
+
+begin father collect garbage
+time_use is 4.245081s, err num is 0 
+timeTotal is 281.992584s
+the rest: 0
+Sat Mar 17 02:23:10 2018
+
+
+60 times
+
+61000000 enqueues + 61000000 dequeues
+
+begin father collect garbage
+time_use is 3.986948s, err num is 0 
+timeTotal is 285.979645s
+the rest: 0
+Sat Mar 17 02:23:14 2018
+
+
+61 times
+
+62000000 enqueues + 62000000 dequeues
+
+begin father collect garbage
+time_use is 4.529942s, err num is 0 
+timeTotal is 290.509796s
+the rest: 0
+Sat Mar 17 02:23:18 2018
+
+
+62 times
+
+63000000 enqueues + 63000000 dequeues
+
+begin father collect garbage
+time_use is 4.079294s, err num is 0 
+timeTotal is 294.589172s
+the rest: 0
+Sat Mar 17 02:23:22 2018
+
+
+63 times
+
+64000000 enqueues + 64000000 dequeues
+
+begin father collect garbage
+time_use is 4.337107s, err num is 0 
+timeTotal is 298.926514s
+the rest: 0
+Sat Mar 17 02:23:27 2018
+
+
+64 times
+
+65000000 enqueues + 65000000 dequeues
+
+begin father collect garbage
+time_use is 4.348202s, err num is 0 
+timeTotal is 303.274811s
+the rest: 0
+Sat Mar 17 02:23:31 2018
+
+
+65 times
+
+66000000 enqueues + 66000000 dequeues
+
+begin father collect garbage
+time_use is 4.054793s, err num is 0 
+timeTotal is 307.329742s
+the rest: 0
+Sat Mar 17 02:23:35 2018
+
+
+66 times
+
+67000000 enqueues + 67000000 dequeues
+
+begin father collect garbage
+time_use is 4.201064s, err num is 0 
+timeTotal is 311.531036s
+the rest: 0
+Sat Mar 17 02:23:39 2018
+
+
+67 times
+
+68000000 enqueues + 68000000 dequeues
+
+begin father collect garbage
+time_use is 3.971905s, err num is 0 
+timeTotal is 315.503143s
+the rest: 0
+Sat Mar 17 02:23:43 2018
+
+
+68 times
+
+69000000 enqueues + 69000000 dequeues
+
+begin father collect garbage
+time_use is 4.596296s, err num is 0 
+timeTotal is 320.099548s
+the rest: 0
+Sat Mar 17 02:23:48 2018
+
+
+69 times
+
+70000000 enqueues + 70000000 dequeues
+
+begin father collect garbage
+time_use is 3.818374s, err num is 0 
+timeTotal is 323.918152s
+the rest: 0
+Sat Mar 17 02:23:52 2018
+
+
+70 times
+
+71000000 enqueues + 71000000 dequeues
+
+begin father collect garbage
+time_use is 4.565853s, err num is 0 
+timeTotal is 328.484253s
+the rest: 0
+Sat Mar 17 02:23:56 2018
+
+
+71 times
+
+72000000 enqueues + 72000000 dequeues
+
+begin father collect garbage
+time_use is 4.063486s, err num is 0 
+timeTotal is 332.547791s
+the rest: 0
+Sat Mar 17 02:24:00 2018
+
+
+72 times
+
+73000000 enqueues + 73000000 dequeues
+
+begin father collect garbage
+time_use is 5.027380s, err num is 0 
+timeTotal is 337.575256s
+the rest: 0
+Sat Mar 17 02:24:05 2018
+
+
+73 times
+
+74000000 enqueues + 74000000 dequeues
+
+begin father collect garbage
+time_use is 3.907110s, err num is 0 
+timeTotal is 341.498688s
+the rest: 0
+Sat Mar 17 02:24:09 2018
+
+
+74 times
+
+75000000 enqueues + 75000000 dequeues
+
+begin father collect garbage
+time_use is 3.613604s, err num is 0 
+timeTotal is 345.177094s
+the rest: 0
+Sat Mar 17 02:24:13 2018
+
+
+75 times
+
+76000000 enqueues + 76000000 dequeues
+
+begin father collect garbage
+time_use is 5.116194s, err num is 0 
+timeTotal is 350.293518s
+the rest: 0
+Sat Mar 17 02:24:18 2018
+
+
+76 times
+
+77000000 enqueues + 77000000 dequeues
+
+begin father collect garbage
+time_use is 3.367754s, err num is 0 
+timeTotal is 353.661499s
+the rest: 0
+Sat Mar 17 02:24:21 2018
+
+
+77 times
+
+78000000 enqueues + 78000000 dequeues
+
+begin father collect garbage
+time_use is 4.380651s, err num is 0 
+timeTotal is 358.042236s
+the rest: 0
+Sat Mar 17 02:24:26 2018
+
+
+78 times
+
+79000000 enqueues + 79000000 dequeues
+
+begin father collect garbage
+time_use is 4.917119s, err num is 0 
+timeTotal is 362.959442s
+the rest: 0
+Sat Mar 17 02:24:31 2018
+
+
+79 times
+
+80000000 enqueues + 80000000 dequeues
+
+begin father collect garbage
+time_use is 4.144533s, err num is 0 
+timeTotal is 367.299713s
+the rest: 0
+Sat Mar 17 02:24:35 2018
+
+
+80 times
+
+81000000 enqueues + 81000000 dequeues
+
+begin father collect garbage
+time_use is 4.247080s, err num is 0 
+timeTotal is 371.546997s
+the rest: 0
+Sat Mar 17 02:24:39 2018
+
+
+81 times
+
+82000000 enqueues + 82000000 dequeues
+
+begin father collect garbage
+time_use is 4.252179s, err num is 0 
+timeTotal is 375.799255s
+the rest: 0
+Sat Mar 17 02:24:44 2018
+
+
+82 times
+
+83000000 enqueues + 83000000 dequeues
+
+begin father collect garbage
+time_use is 4.565977s, err num is 0 
+timeTotal is 380.365326s
+the rest: 0
+Sat Mar 17 02:24:48 2018
+
+
+83 times
+
+84000000 enqueues + 84000000 dequeues
+
+begin father collect garbage
+time_use is 4.345199s, err num is 0 
+timeTotal is 384.710724s
+the rest: 0
+Sat Mar 17 02:24:53 2018
+
+
+84 times
+
+85000000 enqueues + 85000000 dequeues
+
+begin father collect garbage
+time_use is 4.298015s, err num is 0 
+timeTotal is 389.008820s
+the rest: 0
+Sat Mar 17 02:24:57 2018
+
+
+85 times
+
+86000000 enqueues + 86000000 dequeues
+
+begin father collect garbage
+time_use is 4.340499s, err num is 0 
+timeTotal is 393.349548s
+the rest: 0
+Sat Mar 17 02:25:01 2018
+
+
+86 times
+
+87000000 enqueues + 87000000 dequeues
+
+begin father collect garbage
+time_use is 4.341596s, err num is 0 
+timeTotal is 397.691223s
+the rest: 0
+Sat Mar 17 02:25:05 2018
+
+
+87 times
+
+88000000 enqueues + 88000000 dequeues
+
+begin father collect garbage
+time_use is 5.725982s, err num is 0 
+timeTotal is 403.417419s
+the rest: 0
+Sat Mar 17 02:25:11 2018
+
+
+88 times
+
+89000000 enqueues + 89000000 dequeues
+
+begin father collect garbage
+time_use is 4.669294s, err num is 0 
+timeTotal is 408.086945s
+the rest: 0
+Sat Mar 17 02:25:16 2018
+
+
+89 times
+
+90000000 enqueues + 90000000 dequeues
+
+begin father collect garbage
+time_use is 6.064739s, err num is 0 
+timeTotal is 414.151764s
+the rest: 0
+Sat Mar 17 02:25:22 2018
+
+
+90 times
+
+91000000 enqueues + 91000000 dequeues
+
+begin father collect garbage
+time_use is 4.991802s, err num is 0 
+timeTotal is 419.143768s
+the rest: 0
+Sat Mar 17 02:25:27 2018
+
+
+91 times
+
+92000000 enqueues + 92000000 dequeues
+
+begin father collect garbage
+time_use is 4.423800s, err num is 0 
+timeTotal is 423.567780s
+the rest: 0
+Sat Mar 17 02:25:31 2018
+
+
+92 times
+
+93000000 enqueues + 93000000 dequeues
+
+begin father collect garbage
+time_use is 4.434417s, err num is 0 
+timeTotal is 428.002289s
+the rest: 0
+Sat Mar 17 02:25:36 2018
+
+
+93 times
+
+94000000 enqueues + 94000000 dequeues
+
+begin father collect garbage
+time_use is 4.584817s, err num is 0 
+timeTotal is 432.587189s
+the rest: 0
+Sat Mar 17 02:25:40 2018
+
+
+94 times
+
+95000000 enqueues + 95000000 dequeues
+
+begin father collect garbage
+time_use is 4.542713s, err num is 0 
+timeTotal is 437.130127s
+the rest: 0
+Sat Mar 17 02:25:45 2018
+
+
+95 times
+
+96000000 enqueues + 96000000 dequeues
+
+begin father collect garbage
+time_use is 5.883709s, err num is 0 
+timeTotal is 443.014038s
+the rest: 0
+Sat Mar 17 02:25:51 2018
+
+
+96 times
+
+97000000 enqueues + 97000000 dequeues
+
+begin father collect garbage
+time_use is 5.472509s, err num is 0 
+timeTotal is 448.486633s
+the rest: 0
+Sat Mar 17 02:25:56 2018
+
+
+97 times
+
+98000000 enqueues + 98000000 dequeues
+
+begin father collect garbage
+time_use is 4.956074s, err num is 0 
+timeTotal is 453.619781s
+the rest: 0
+Sat Mar 17 02:26:01 2018
+
+
+98 times
+
+99000000 enqueues + 99000000 dequeues
+
+begin father collect garbage
+time_use is 4.272342s, err num is 0 
+timeTotal is 457.892334s
+the rest: 0
+Sat Mar 17 02:26:06 2018
+
+
+99 times
+
+100000000 enqueues + 100000000 dequeues
+
+begin father collect garbage
+time_use is 4.797868s, err num is 0 
+timeTotal is 462.690430s
+the rest: 0
+Sat Mar 17 02:26:10 2018
+
