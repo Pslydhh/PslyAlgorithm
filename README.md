@@ -39,3 +39,6 @@ TestForMultiverse.java： A use case that runs Multiverse (software transaction 
 
 LockFreeLinkedList.java： The famous Harris's List, lock-free List. paper: https://www.microsoft.com/en-us/research/wp-content/uploads/2001/10/2001-disc.pdf
 
+scalableconqueue.h：with unlink thread handler when thread over(Precondition: thread must over before queue destruct)
+scalableconqueue_no_unlink.h：Don't unlink thread handler so no need for the order of thread over and queue over.
+
