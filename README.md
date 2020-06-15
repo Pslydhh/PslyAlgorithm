@@ -1,4 +1,4 @@
-Email: pslydhh@gmail.com
+Email: luouyuyou@gmail.com
 
 # PslyAlgorithm
 old blog: http://blog.csdn.net/luoyuyou
