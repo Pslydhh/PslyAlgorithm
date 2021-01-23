@@ -63,48 +63,18 @@ Record* idx_Record(int index) {
    
       
 Record* get_Record() {             
-	for(;;) {
-		int localArrayNum = PSLY_Record_ARRAYNUM;   
-		int array = localArrayNum - 1;
-		RecordQueue* queue = psly_Record_queues + array;
-		Record* arr = psly_Records[array];
-		for(;;){
-			int headIndex = (queue->head);
-			int indexHead = headIndex & PSLY_Record_HEADIDXBIT;
-			Record* head = arr + indexHead;
-			int tailIndex = (queue->tail);
-			int indexTail = tailIndex & PSLY_Record_TAILIDXBIT;
-
-			int nextIndex = (head->next);
-
-			if(headIndex == (queue->head)) {
-				if(indexHead == indexTail){
-					if((nextIndex & PSLY_Record_NEXTTAILBIT) == PSLY_Record_NEXTTAILBIT)
-						break;
-					__sync_bool_compare_and_swap(&queue->tail, tailIndex, (((tailIndex & PSLY_Record_TAILVERSIONBIT) + PSLY_Record_TAILVERSIONONE ) & PSLY_Record_TAILVERSIONBIT)|(nextIndex & PSLY_Record_TAILIDXBIT));    
-				} else {
-					if(__sync_bool_compare_and_swap(&queue->head, headIndex, (((headIndex & PSLY_Record_HEADVERSIONBIT) + PSLY_Record_HEADVERSIONONE) & PSLY_Record_HEADVERSIONBIT)|(nextIndex & PSLY_Record_HEADIDXBIT))) {
-						return head;
-					} else {
-						break;
-					}
-				}
-			}
-
-		}	
-    for(int i = 0; i < localArrayNum; ++i) {
-		long localR;
-        int array = (localR = __sync_fetch_and_add(&recordTake, 1)) % localArrayNum;
+    for(;;) {
+        int localArrayNum = PSLY_Record_ARRAYNUM;   
+        int array = localArrayNum - 1;
         RecordQueue* queue = psly_Record_queues + array;
-    	Record* arr = psly_Records[array];
+        Record* arr = psly_Records[array];
         for(;;){
             int headIndex = (queue->head);
             int indexHead = headIndex & PSLY_Record_HEADIDXBIT;
             Record* head = arr + indexHead;
             int tailIndex = (queue->tail);
             int indexTail = tailIndex & PSLY_Record_TAILIDXBIT;
-			if(array < 0)
-				printf("array: %d theRecordTake: %ld\n", array, localR);
+
             int nextIndex = (head->next);
 
             if(headIndex == (queue->head)) {
@@ -116,14 +86,45 @@ Record* get_Record() {
                     if(__sync_bool_compare_and_swap(&queue->head, headIndex, (((headIndex & PSLY_Record_HEADVERSIONBIT) + PSLY_Record_HEADVERSIONONE) & PSLY_Record_HEADVERSIONBIT)|(nextIndex & PSLY_Record_HEADIDXBIT))) {
                         return head;
                     } else {
-						break;
-					}
+                        break;
+                    }
+                }
+            }
+
+        }
+    int i = 0;   
+    for(; i < localArrayNum; ++i) {
+        long localR;
+        int array = (localR = __sync_fetch_and_add(&recordTake, 1)) % localArrayNum;
+        RecordQueue* queue = psly_Record_queues + array;
+        Record* arr = psly_Records[array];
+        for(;;){
+            int headIndex = (queue->head);
+            int indexHead = headIndex & PSLY_Record_HEADIDXBIT;
+            Record* head = arr + indexHead;
+            int tailIndex = (queue->tail);
+            int indexTail = tailIndex & PSLY_Record_TAILIDXBIT;
+            if(array < 0)
+                printf("array: %d theRecordTake: %ld\n", array, localR);
+            int nextIndex = (head->next);
+
+            if(headIndex == (queue->head)) {
+                if(indexHead == indexTail){
+                    if((nextIndex & PSLY_Record_NEXTTAILBIT) == PSLY_Record_NEXTTAILBIT)
+                        break;
+                    __sync_bool_compare_and_swap(&queue->tail, tailIndex, (((tailIndex & PSLY_Record_TAILVERSIONBIT) + PSLY_Record_TAILVERSIONONE ) & PSLY_Record_TAILVERSIONBIT)|(nextIndex & PSLY_Record_TAILIDXBIT));    
+                } else {
+                    if(__sync_bool_compare_and_swap(&queue->head, headIndex, (((headIndex & PSLY_Record_HEADVERSIONBIT) + PSLY_Record_HEADVERSIONONE) & PSLY_Record_HEADVERSIONBIT)|(nextIndex & PSLY_Record_HEADIDXBIT))) {
+                        return head;
+                    } else {
+                        break;
+                    }
                 }
             }
         }
     }
-  
-    for(int i = 0; i < localArrayNum; ++i) {
+    i = 0; 
+    for(; i < localArrayNum; ++i) {
         int array = i;
         RecordQueue* queue = psly_Record_queues + array;
         Record* arr = psly_Records[array];
@@ -150,38 +151,39 @@ Record* get_Record() {
 
         }
     }
-			//不够增加
-		if(localArrayNum == PSLY_Record_ARRAYNUM_MAX)
-			return NULL;
-		if(localArrayNum == PSLY_Record_ARRAYNUM) {
-			if(psly_Records[localArrayNum] == NULL) {
-				int array_ = localArrayNum;
-				Record* record;
-				void * ptr;
-				int ret = posix_memalign(&ptr, 4096, (1 << PSLY_Record_IDXNUM) * sizeof(Record));
-				record = ptr;
-				memset(record, 0, (1 << PSLY_Record_IDXNUM) * sizeof(Record)); 
-				for(int j = 0; j < (1 << PSLY_Record_IDXNUM) - 1; ++j){ 
-				  record->self = (array_ << PSLY_Record_IDXNUM) | j; 
-				  record->next = j+1; 
-				  record->pointer = NULL;
-				  record->nextRecord = 0;
-				  record += 1; 
-				}    
-				record->self = (array_ << PSLY_Record_IDXNUM) | ((1 << PSLY_Record_IDXNUM) - 1); 
-				record->next = PSLY_Record_NEXTTAILBIT;  
-				record->pointer = NULL;
-				record->nextRecord = 0;
-				//printf("I'm here %d %ld\n", localArrayNum, pthread_self());
-				if(!__sync_bool_compare_and_swap(&psly_Records[array_], NULL, ptr))
-					{free(ptr);}
-				else
-					/*printf("extend to %d\n", localArrayNum + 1)*/;
-			}
-		   	if(localArrayNum == PSLY_Record_ARRAYNUM)
-				__sync_bool_compare_and_swap(&PSLY_Record_ARRAYNUM, localArrayNum, localArrayNum + 1);
-		}
-	}
+            //不够增加
+        if(localArrayNum == PSLY_Record_ARRAYNUM_MAX)
+            return NULL;
+        if(localArrayNum == PSLY_Record_ARRAYNUM) {
+            if(psly_Records[localArrayNum] == NULL) {
+                int array_ = localArrayNum;
+                Record* record;
+                void * ptr;
+                int ret = posix_memalign(&ptr, 4096, (1 << PSLY_Record_IDXNUM) * sizeof(Record));
+                record = ptr;
+                memset(record, 0, (1 << PSLY_Record_IDXNUM) * sizeof(Record)); 
+                int j = 0;
+                for(; j < (1 << PSLY_Record_IDXNUM) - 1; ++j){ 
+                  record->self = (array_ << PSLY_Record_IDXNUM) | j; 
+                  record->next = j+1; 
+                  record->pointer = NULL;
+                  record->nextRecord = 0;
+                  record += 1; 
+                }    
+                record->self = (array_ << PSLY_Record_IDXNUM) | ((1 << PSLY_Record_IDXNUM) - 1); 
+                record->next = PSLY_Record_NEXTTAILBIT;  
+                record->pointer = NULL;
+                record->nextRecord = 0;
+                //printf("I'm here %d %ld\n", localArrayNum, pthread_self());
+                if(!__sync_bool_compare_and_swap(&psly_Records[array_], NULL, ptr))
+                    {free(ptr);}
+                else
+                    /*printf("extend to %d\n", localArrayNum + 1)*/;
+            }
+            if(localArrayNum == PSLY_Record_ARRAYNUM)
+                __sync_bool_compare_and_swap(&PSLY_Record_ARRAYNUM, localArrayNum, localArrayNum + 1);
+        }
+    }
 }
   
 void return_Record(Record* record) {
@@ -265,8 +267,8 @@ long newNext(long old, Record* replace) {
 }
 
 typedef struct Prevs {
-	Record* r __attribute__((aligned(128)));
-	long rNext ;
+    Record* r __attribute__((aligned(128)));
+    long rNext ;
 } Prevs __attribute__((aligned(128)));
 #define MAXPREV 1024
 #define STEPBIT 0
@@ -276,9 +278,10 @@ int psly_handle_records(RecordList* list, void* pointer, int flag) {
   static __thread Prevs prevs_[MAXPREV];
   static __thread bool flag_ = false;
   if(!flag_) {
-  for(int i = 0; i < MAXPREV; ++i) {
-	prevs_[i].r = NULL;
-	prevs_[i].rNext = 0;
+  int i = 0;
+  for(; i < MAXPREV; ++i) {
+    prevs_[i].r = NULL;
+    prevs_[i].rNext = 0;
   }
   flag_ = true;
   }
@@ -295,83 +298,83 @@ int psly_handle_records(RecordList* list, void* pointer, int flag) {
   long prevNext = (prev->nextRecord);
   Record* curr = idx_Record(prevNext);
   for(;;) {
-	long currNext;
+    long currNext;
     KeepPrev:
     currNext = curr->nextRecord;
     void* currPointer = (curr->pointer);
     long New = (prev->nextRecord);
     if((prevNext & NODEBITS) != (New & NODEBITS) || (New & REFCBITS) == DELETED) {
       /*prev = head;
-	  prevNext = (prev->nextRecord);
-	  curr = idx_Record(prevNext);*/
-	  --steps;
-	  for(;;) {
-		int bucket = steps >> STEPBIT;
-		bucket = bucket < MAXPREV ? bucket: (MAXPREV - 1);
-		Prevs* prevs = &prevs_[bucket];
-		prev = prevs->r;
-	//	printf("steps: %d\n", steps + 1);
-		prevNext = prev->nextRecord;
-	 	long prevNextKeep = prevs->rNext;
-	  	if((prevNextKeep & NODEBITS) != (prevNext & NODEBITS) || (prevNext & REFCBITS) == DELETED) {
-		  steps -= STEPS;	
-		} else {
-		  prevs->rNext = prevNext;
-		  curr = idx_Record(prevNext);
-		  break;
-		}
-	  }
-	  steps = steps & (~STEPS_); 
-	  continue;
-	}
+      prevNext = (prev->nextRecord);
+      curr = idx_Record(prevNext);*/
+      --steps;
+      for(;;) {
+        int bucket = steps >> STEPBIT;
+        bucket = bucket < MAXPREV ? bucket: (MAXPREV - 1);
+        Prevs* prevs = &prevs_[bucket];
+        prev = prevs->r;
+    //  printf("steps: %d\n", steps + 1);
+        prevNext = prev->nextRecord;
+        long prevNextKeep = prevs->rNext;
+        if((prevNextKeep & NODEBITS) != (prevNext & NODEBITS) || (prevNext & REFCBITS) == DELETED) {
+          steps -= STEPS;   
+        } else {
+          prevs->rNext = prevNext;
+          curr = idx_Record(prevNext);
+          break;
+        }
+      }
+      steps = steps & (~STEPS_); 
+      continue;
+    }
     if((prevNext & NEXTTT) != (New & NEXTTT)) {
       //JUSTNEXTCHANGE: 
       prevNext = New;
       curr = idx_Record(prevNext);
       continue;
     }
-	prevNext = New;
+    prevNext = New;
     long currKey = (long) currPointer;
     if(curr == tail || currKey > key) {
-		if(flag == SEARCH) 
-			return 0;
-	  	if(flag == REMOVE && (prevNext & ARRIDXBIT_) == (curr->self & ARRIDXBIT_))
-			return 0;
-		Record* append;
-		/*CasAppend:*/
-	    if(flag == RECORD) {
-			if(my == NULL) {
-				my = get_Record();
-				localN = (my->nextRecord);
-				my->pointer = pointer;
-			}
+        if(flag == SEARCH) 
+            return 0;
+        if(flag == REMOVE && (prevNext & ARRIDXBIT_) == (curr->self & ARRIDXBIT_))
+            return 0;
+        Record* append;
+        /*CasAppend:*/
+        if(flag == RECORD) {
+            if(my == NULL) {
+                my = get_Record();
+                localN = (my->nextRecord);
+                my->pointer = pointer;
+            }
             my->nextRecord = newNext(localN, curr);
-			append = my;
-		} else {
-			append = curr;
-		}
-		for(;;) {
-		long prevBefore;
-		if((prevBefore = __sync_val_compare_and_swap(&prev->nextRecord, prevNext, nxtAddrV(prevNext, append))) == prevNext ) {
-//			printf("%d add\n", __sync_add_and_fetch(&maxListLFor0, 1));
-		  //sleep(5);
-		  long local = prevNext;
-		  while((local & ARRIDXBIT_) != (curr->self & ARRIDXBIT_)){
-			Record* first = idx_Record(local);
-			first->pointer = NULL;
-			local = (first->nextRecord);
-//			if(index == 0)
-//				printf("%d sub\n", __sync_sub_and_fetch(&maxListLFor0, 1));
-			return_Record(first);
-		  }
-		  if(flag == RECORD)
-			return 1;
-		  else
-			return 0;
-		}
-		New = prevBefore;
-		if((prevNext & NODEBITS) != (New & NODEBITS) || (New & REFCBITS) == DELETED) {
-		  /*prev = head;
+            append = my;
+        } else {
+            append = curr;
+        }
+        for(;;) {
+        long prevBefore;
+        if((prevBefore = __sync_val_compare_and_swap(&prev->nextRecord, prevNext, nxtAddrV(prevNext, append))) == prevNext ) {
+//          printf("%d add\n", __sync_add_and_fetch(&maxListLFor0, 1));
+          //sleep(5);
+          long local = prevNext;
+          while((local & ARRIDXBIT_) != (curr->self & ARRIDXBIT_)){
+            Record* first = idx_Record(local);
+            first->pointer = NULL;
+            local = (first->nextRecord);
+//          if(index == 0)
+//              printf("%d sub\n", __sync_sub_and_fetch(&maxListLFor0, 1));
+            return_Record(first);
+          }
+          if(flag == RECORD)
+            return 1;
+          else
+            return 0;
+        }
+        New = prevBefore;
+        if((prevNext & NODEBITS) != (New & NODEBITS) || (New & REFCBITS) == DELETED) {
+          /*prev = head;
           prevNext = (prev->nextRecord);
           curr = idx_Record(prevNext);*/
       --steps;
@@ -392,18 +395,18 @@ int psly_handle_records(RecordList* list, void* pointer, int flag) {
       }
       steps = steps & (~STEPS_);
 
-      	  goto KeepPrev;
-		}
-		if((prevNext & NEXTTT) != (New & NEXTTT)) {
+          goto KeepPrev;
+        }
+        if((prevNext & NEXTTT) != (New & NEXTTT)) {
           prevNext = New;
           curr = idx_Record(prevNext);
-      	  goto KeepPrev;
-		}
-		prevNext = New;
-		}
+          goto KeepPrev;
+        }
+        prevNext = New;
+        }
     } else {
-	  if(flag == SEARCH && currKey == key) 
-       	return (currNext >> RECBW) & REFCBITS_;
+      if(flag == SEARCH && currKey == key) 
+        return (currNext >> RECBW) & REFCBITS_;
       New = (curr->nextRecord);
       if((currNext & NODEBITS) != (New & NODEBITS)) {
         New = (prev->nextRecord);
@@ -430,7 +433,7 @@ int psly_handle_records(RecordList* list, void* pointer, int flag) {
       steps = steps & (~STEPS_);
 
           continue;
-		}
+        }
         prevNext = New;
         curr = idx_Record(prevNext);
         continue;
@@ -441,46 +444,46 @@ int psly_handle_records(RecordList* list, void* pointer, int flag) {
         continue;
       }
       if(currKey != key) {
-		int bucket;
-		if((steps & STEPS_) == 0 && (bucket = (steps >> STEPBIT)) < MAXPREV) {
-			Prevs* step = &prevs_[bucket];
-			//if(step->r != prev) {
-				step->r = prev;
-				step->rNext = prevNext;
-			//}
-		}
-		++steps; 
+        int bucket;
+        if((steps & STEPS_) == 0 && (bucket = (steps >> STEPBIT)) < MAXPREV) {
+            Prevs* step = &prevs_[bucket];
+            //if(step->r != prev) {
+                step->r = prev;
+                step->rNext = prevNext;
+            //}
+        }
+        ++steps; 
         //printf("steps: %d\n", steps + 1);
         prev = curr;
         prevNext = currNext;
       } else {
         if(removed)
           return 0;
-	  
+      
         Record* found = curr;
         long foundNext = currNext;
-		if(flag == REMOVE) {
-		  long refNuM;
-		  if(((refNuM = __sync_sub_and_fetch(&found->nextRecord, REFONE)) & REFCBITS) != DELETED)
-			return (refNuM >> RECBW) & REFCBITS_;
-		  removed = 1;
-		  currNext = refNuM;
-		} else {
-			for(;;) {
-				long refNuM;   
-				long prevBefore;
-				if((prevBefore = __sync_val_compare_and_swap(&found->nextRecord, foundNext, refNuM = plusRecord(foundNext))) == foundNext) {
-					if(my != NULL) {
-						my->nextRecord = localN;
-						return_Record(my);
-					}
-					return (refNuM >> RECBW) & REFCBITS_;       
-				}
-				New = prevBefore;
-				if((foundNext & NODEBITS) != (New & NODEBITS)) {
-				  New = (prev->nextRecord);
-				  if((prevNext & NODEBITS) != (New & NODEBITS) || (New & REFCBITS) == DELETED) {
-				    /*prev = head;
+        if(flag == REMOVE) {
+          long refNuM;
+          if(((refNuM = __sync_sub_and_fetch(&found->nextRecord, REFONE)) & REFCBITS) != DELETED)
+            return (refNuM >> RECBW) & REFCBITS_;
+          removed = 1;
+          currNext = refNuM;
+        } else {
+            for(;;) {
+                long refNuM;   
+                long prevBefore;
+                if((prevBefore = __sync_val_compare_and_swap(&found->nextRecord, foundNext, refNuM = plusRecord(foundNext))) == foundNext) {
+                    if(my != NULL) {
+                        my->nextRecord = localN;
+                        return_Record(my);
+                    }
+                    return (refNuM >> RECBW) & REFCBITS_;       
+                }
+                New = prevBefore;
+                if((foundNext & NODEBITS) != (New & NODEBITS)) {
+                  New = (prev->nextRecord);
+                  if((prevNext & NODEBITS) != (New & NODEBITS) || (New & REFCBITS) == DELETED) {
+                    /*prev = head;
                     prevNext = (prev->nextRecord);
                     curr = idx_Record(prevNext);*/
       --steps;
@@ -501,18 +504,18 @@ int psly_handle_records(RecordList* list, void* pointer, int flag) {
       }
       steps = steps & (~STEPS_);
 
-                    goto KeepPrev;	
-				  }
-       			  prevNext = New;
-      			  curr = idx_Record(prevNext);
-      			  goto KeepPrev;
-				}
-				if((New & REFCBITS) == DELETED) {
-					currNext = New;
-					break;
-				}
-				foundNext = New;
-			}
+                    goto KeepPrev;  
+                  }
+                  prevNext = New;
+                  curr = idx_Record(prevNext);
+                  goto KeepPrev;
+                }
+                if((New & REFCBITS) == DELETED) {
+                    currNext = New;
+                    break;
+                }
+                foundNext = New;
+            }
         }
       }
       curr = idx_Record(currNext);
@@ -539,74 +542,80 @@ int psly_search(void* pointer) {
 }
 
 #define INIT_RESOURCE(listNum)   \
-  for(int i = 0; i < (PSLY_Record_ARRAYNUM); ++i){ \
+  int i = 0; \
+  for(; i < (PSLY_Record_ARRAYNUM); ++i){ \
     Record* record; \
     void * ptr;\
     int ret = posix_memalign(&ptr, 4096, (1 << PSLY_Record_IDXNUM) * sizeof(Record));\
     psly_Records[i] = record = ptr; \
     memset(record, 0, (1 << PSLY_Record_IDXNUM) * sizeof(Record)); \
-    for(int j = 0; j < (1 << PSLY_Record_IDXNUM) - 1; ++j){ \
+    int j = 0; \
+    for(; j < (1 << PSLY_Record_IDXNUM) - 1; ++j){ \
       record->self = (i << PSLY_Record_IDXNUM) | j; \
       record->next = j+1; \
-	  record->pointer = NULL;\
+      record->pointer = NULL;\
       record->nextRecord = 0;\
-	  /*printf("%ld\n", record->nextRecord);*/\
+      /*printf("%ld\n", record->nextRecord);*/\
       record += 1; \
     }    \
     record->self = (i << PSLY_Record_IDXNUM) | ((1 << PSLY_Record_IDXNUM) - 1); \
     record->next = PSLY_Record_NEXTTAILBIT;  \
-	record->pointer = NULL;\
+    record->pointer = NULL;\
     record->nextRecord = 0;\
   }\
-  for(int i = 0; i < PSLY_Record_ARRAYNUM_MAX; ++i){\
+  i = 0; \
+  for(; i < PSLY_Record_ARRAYNUM_MAX; ++i){\
     psly_Record_queues[i].head = 0; \
     psly_Record_queues[i].tail = (1 << PSLY_Record_IDXNUM) - 1; \
   } \
-  for(int i = 0; i < listNum; ++i) { \
+  i = 0; \
+  for(; i < listNum; ++i) { \
     void* ptr;\
     int ret = posix_memalign(&ptr, 4096, sizeof(RecordList));\
     Record* head = get_Record();\
     Record* tail = get_Record();\
     head->nextRecord = newNext(head->nextRecord, tail); \
-	map.lists[i] = ptr;\
+    map.lists[i] = ptr;\
     map.lists[i]->head = head; \
     map.lists[i]->tail = tail; \
   }
 
 #define UNINIT_RESOURCE(listNum)  \
-    for(int i = 0; i < (PSLY_Record_ARRAYNUM); ++i){ \
+    int j = 0; \
+    for(; j < (PSLY_Record_ARRAYNUM); ++j){ \
         free(psly_Records[i]); \
     } \
-	for(int i = 0; i < listNum; ++i) {\
-		free(map.lists[i]);\
-	}
+    j = 0;\
+    for(; j < listNum; ++j) {\
+        free(map.lists[j]);\
+    }
 
-#define 	K	2	
-int	THRESHOLD = 1;
-int MAXTHRES = 1;	
-#define		MAXTHREADS	11000
+#define     K   2   
+int THRESHOLD = 1;
+int MAXTHRES = 1;   
+#define     MAXTHREADS  11000
 
 
 typedef struct NodeType {
-	int value;
-	struct NodeType* next;	
+    int value;
+    struct NodeType* next;  
 } NodeType;
 
 void* GlobalHP[K * MAXTHREADS];
 int H = 0;
 
 typedef struct ListType{
-	void* node;
-	struct ListType* next;
+    void* node;
+    struct ListType* next;
 } ListType;
 
 typedef struct HPrectype{
-	void** HP;
-	struct HPrectype* next;
-	bool Active;
-	int	rcount;
-	int count;
-	ListType* list;
+    void** HP;
+    struct HPrectype* next;
+    bool Active;
+    int rcount;
+    int count;
+    ListType* list;
 } HPrecType;
 
 
@@ -616,377 +625,384 @@ volatile NodeType* Tail;
 static __thread HPrecType* myhprec;
 
 void allocateHPRec() {
-	HPrecType* local = head;
-	for(;local != NULL; local = local->next){
-		if(local->Active)
-			continue;
-		if(!__sync_bool_compare_and_swap(&local->Active, false, true))
-			continue;
-		myhprec = local;
-		return;		
-	}
-	
-	int oldCount;
-	do {
-		oldCount = H;
-	} while(!__sync_bool_compare_and_swap(&H, oldCount, oldCount + K));
-	
-	local = (HPrecType*) malloc(sizeof(HPrecType));
-	if(local == NULL) {printf("NULL!!!!\n");exit(1);}
-	local->Active = true;
-	local->next = NULL;
-	local->HP = GlobalHP + oldCount;
-	for(int i = 0; i < K; ++i)
-		local->HP[i] = NULL;
-	__asm__ volatile("mfence" : : : "cc", "memory");
-	local->rcount = 0;
-	local->count = 0;
-	local->list = (ListType*) malloc(MAXTHRES * sizeof(ListType));
-	if(local->list == NULL) {printf("NULL!\n"); exit(1);}
-	for(int i = 0; i < MAXTHRES; ++i) {
-		local->list[i].node = NULL;
-		local->list[i].next = NULL;
-	}	
+    HPrecType* local = head;
+    for(;local != NULL; local = local->next){
+        if(local->Active)
+            continue;
+        if(!__sync_bool_compare_and_swap(&local->Active, false, true))
+            continue;
+        myhprec = local;
+        return;     
+    }
+    
+    int oldCount;
+    do {
+        oldCount = H;
+    } while(!__sync_bool_compare_and_swap(&H, oldCount, oldCount + K));
+    
+    local = (HPrecType*) malloc(sizeof(HPrecType));
+    if(local == NULL) {printf("NULL!!!!\n");exit(1);}
+    local->Active = true;
+    local->next = NULL;
+    local->HP = GlobalHP + oldCount;
+    int i = 0;
+    for(; i < K; ++i)
+        local->HP[i] = NULL;
+    __asm__ volatile("mfence" : : : "cc", "memory");
+    local->rcount = 0;
+    local->count = 0;
+    local->list = (ListType*) malloc(MAXTHRES * sizeof(ListType));
+    if(local->list == NULL) {printf("NULL!\n"); exit(1);}
+    i = 0;
+    for(; i < MAXTHRES; ++i) {
+        local->list[i].node = NULL;
+        local->list[i].next = NULL;
+    }   
 
-	HPrecType* oldHead;
-	do {
-		oldHead = head;
-		local->next = oldHead;
-	} while(!__sync_bool_compare_and_swap(&head, oldHead, local));
-	myhprec = local;
+    HPrecType* oldHead;
+    do {
+        oldHead = head;
+        local->next = oldHead;
+    } while(!__sync_bool_compare_and_swap(&head, oldHead, local));
+    myhprec = local;
 }
 
 void retireHPrec(){
-	for(int i = 0; i < K; ++i)
-		myhprec->HP[i] = NULL;
-	myhprec->Active = false;
-}	
+    int i = 0;
+    for(; i < K; ++i)
+        myhprec->HP[i] = NULL;
+    myhprec->Active = false;
+}   
 
 bool isInpre(void* node, ListType* list){
     while(list != NULL){
         if(list->node == node)
             return true;
-		list = list->next;
+        list = list->next;
     }
     return false;
 }
 
 bool isIn(void* node){
-	return psly_search(node);
+    return psly_search(node);
 }
 
 int numOfRetire;
 
 void scan(HPrecType* local){
-	__sync_fetch_and_add(&numOfRetire, 1);
+    __sync_fetch_and_add(&numOfRetire, 1);
     ListType* rList = local->list;
-	int i = 0;
+    int i = 0;
     while(i <= local->rcount){
         void* node = rList[i].node;
         if(node != NULL && !isIn(node)){
-			free(node);
-			rList[i].node = NULL;
-			local->count--;	
-		}
-		++i;
+            free(node);
+            rList[i].node = NULL;
+            local->count--; 
+        }
+        ++i;
     }
 
 }
 
 void retireNode(void* node){
-	int i;
-	int count = 0;
-	begin: i = 0;	
-	ListType* the;
-	count++;
-	if(count > 100000)	
-		printf("retireLoop %d", count); 
-	for(the = myhprec->list; i < MAXTHRES; ){
-		if(the->node == NULL)
-			break;
-		++i;
-		the = myhprec->list + i;
-	} 
-	if(i == MAXTHRES){printf("%ld\n", pthread_self());
-		scan(myhprec);
-		goto begin;
-	}	
-	the->node = node;
-	if(i > myhprec->rcount)	
-		myhprec->rcount = i;
-	myhprec->count++;
+    int i;
+    int count = 0;
+    begin: i = 0;   
+    ListType* the;
+    count++;
+    if(count > 100000)  
+        printf("retireLoop %d", count); 
+    for(the = myhprec->list; i < MAXTHRES; ){
+        if(the->node == NULL)
+            break;
+        ++i;
+        the = myhprec->list + i;
+    } 
+    if(i == MAXTHRES){printf("%ld\n", pthread_self());
+        scan(myhprec);
+        goto begin;
+    }   
+    the->node = node;
+    if(i > myhprec->rcount) 
+        myhprec->rcount = i;
+    myhprec->count++;
 
-	if(myhprec->count >= THRESHOLD){
-		scan(myhprec);
-	}
+    if(myhprec->count >= THRESHOLD){
+        scan(myhprec);
+    }
 }
 
 void enqueue(int value){
-	//NodeType* node = (NodeType*) malloc(sizeof(NodeType));
-	NodeType* node;
-	int re = posix_memalign(&node, 64, sizeof(NodeType));
-	if(re == EINVAL) {
-		printf("参数不是2的幂，或者不是void指针的倍数。\n");
-		fflush(stdout);
-		exit(1);
-	}
-	if(re == ENOMEM) {
-		printf("没有足够的内存去满足函数的请求。\n");
-		fflush(stdout);
-		exit(1);
-	}
-	if((((long) node) & 63) != 0) {
-		printf("%p is not 64 enqueue\n", node);
-		fflush(stdout);sleep(10);
-		exit(1);
-	} 
-	NodeType* local = Tail;
+    //NodeType* node = (NodeType*) malloc(sizeof(NodeType));
+    NodeType* node;
+    int re = posix_memalign(&node, 64, sizeof(NodeType));
+    if(re == EINVAL) {
+        printf("参数不是2的幂，或者不是void指针的倍数。\n");
+        fflush(stdout);
+        exit(1);
+    }
+    if(re == ENOMEM) {
+        printf("没有足够的内存去满足函数的请求。\n");
+        fflush(stdout);
+        exit(1);
+    }
+    if((((long) node) & 63) != 0) {
+        printf("%p is not 64 enqueue\n", node);
+        fflush(stdout);sleep(10);
+        exit(1);
+    } 
+    NodeType* local = Tail;
     if( local == node ) {
         printf("%p %p %p is something wrong!1 before %d\n", local, node, node->next, pthread_self());
-		fflush(stdout);sleep(10);
+        fflush(stdout);sleep(10);
         exit(1);
-    }	
-	memset(node, 0, sizeof(NodeType));
-	if(node == NULL) { printf("KKKKKKKKKKKKKK\n"); exit(1);}
-	node->value = value;
-	node->next = NULL;
-	NodeType* t;
-	long count = 0;
-	for(;;){
-		++count;
-		if(count > 100000000) {
-			printf(">>>100000000\n");
-			printf("%p %p %d\n", t, t->next, pthread_self());
-			sleep(10);
-		}
-		t = Tail;
+    }   
+    memset(node, 0, sizeof(NodeType));
+    if(node == NULL) { printf("KKKKKKKKKKKKKK\n"); exit(1);}
+    node->value = value;
+    node->next = NULL;
+    NodeType* t;
+    long count = 0;
+    for(;;){
+        ++count;
+        if(count > 100000000) {
+            printf(">>>100000000\n");
+            printf("%p %p %d\n", t, t->next, pthread_self());
+            sleep(10);
+        }
+        t = Tail;
         if((((long)t) & 63) != 0) {
             printf("%p & 63 != 0      0 enqueue %d\n", t, pthread_self());
             fflush(stdout);sleep(10);
             exit(1);
         }
-		if( t == node ) {
-        	printf("%p %p is something wrong!1 %d\n", t, node, pthread_self());
-			fflush(stdout);sleep(10);
-			exit(1);
+        if( t == node ) {
+            printf("%p %p is something wrong!1 %d\n", t, node, pthread_self());
+            fflush(stdout);sleep(10);
+            exit(1);
         }
-		psly_record(t);
-		
-		if(Tail != t) {
-			psly_remove(t);
-			continue; 
-		}
-		NodeType* next = t->next;
+        psly_record(t);
+        
+        if(Tail != t) {
+            psly_remove(t);
+            continue; 
+        }
+        NodeType* next = t->next;
         if((((long)next) & 63) != 0) {
             printf("%p %p & 63 != 0      4 next %d\n", next, t, pthread_self());
             fflush(stdout);sleep(10);
             exit(1);
         }
-		if(Tail != t) {
-			psly_remove(t);
-			continue;
-		}
-		if(next != NULL){ 
-			psly_remove(t);
-			if(__sync_bool_compare_and_swap(&Tail, t, next)) {
-				if((((long)next) & 63) != 0) {
-                	printf("%p & 63 != 0      4 %d\n", next, pthread_self());
-                	fflush(stdout);sleep(10);
-                	exit(1);
-            	}	
-			}
-			continue;
-		}
-		if(__sync_bool_compare_and_swap(&t->next, NULL, node)) {
-			if((((long)node) & 63) != 0) {
-            	printf("%p & 63 != 0      5 %d\n", node, pthread_self());
-            	fflush(stdout);sleep(10);
-            	exit(1);
-        	}
-			psly_remove(t);
-			if( t == node ) {
-				printf("%p %p is something wrong!2 %d\n", t, node, pthread_self());
-				fflush(stdout);sleep(10);
-				exit(1);
-			}
-			break;
-		}
-		psly_remove(t);
-	}
-	if(__sync_bool_compare_and_swap(&Tail, t, node)) {
-		if((((long)node) & 63) != 0) {
+        if(Tail != t) {
+            psly_remove(t);
+            continue;
+        }
+        if(next != NULL){ 
+            psly_remove(t);
+            if(__sync_bool_compare_and_swap(&Tail, t, next)) {
+                if((((long)next) & 63) != 0) {
+                    printf("%p & 63 != 0      4 %d\n", next, pthread_self());
+                    fflush(stdout);sleep(10);
+                    exit(1);
+                }   
+            }
+            continue;
+        }
+        if(__sync_bool_compare_and_swap(&t->next, NULL, node)) {
+            if((((long)node) & 63) != 0) {
+                printf("%p & 63 != 0      5 %d\n", node, pthread_self());
+                fflush(stdout);sleep(10);
+                exit(1);
+            }
+            psly_remove(t);
+            if( t == node ) {
+                printf("%p %p is something wrong!2 %d\n", t, node, pthread_self());
+                fflush(stdout);sleep(10);
+                exit(1);
+            }
+            break;
+        }
+        psly_remove(t);
+    }
+    if(__sync_bool_compare_and_swap(&Tail, t, node)) {
+        if((((long)node) & 63) != 0) {
             printf("%p & 63 != 0      6 %d\n", node, pthread_self());
             fflush(stdout);sleep(10);
             exit(1);
         }
-	}
+    }
 }
 int flagRet = 1;
 
 int dequeue(){
-	long count = 0;
-	int data;
-	NodeType* h;
-	for(;;){
-		++count;
-		if(count > 100000)
-			printf("DDDDDDDDDDDDDDDDDDDDDAAAAA>100000\n");
-		h = Head;
-		//myhprec->HP[0] = h;
-		psly_record(h);
-		if(Head != h) {
-			psly_remove(h);
-			continue;
-		}
-		NodeType* t = Tail;
-		NodeType* next = h->next;
-		psly_record(next);
-		//myhprec->HP[1] = next;
-		if(Head != h) {
-			psly_remove(h);
-			psly_remove(next);
-			continue;
-		}
-		if(next == NULL) {
-			psly_remove(h);
-			psly_remove(next);
-			return -1000000;	
-		}
-		if((((long) next) & 63) != 0) {
+    long count = 0;
+    int data;
+    NodeType* h;
+    for(;;){
+        ++count;
+        if(count > 100000)
+            printf("DDDDDDDDDDDDDDDDDDDDDAAAAA>100000\n");
+        h = Head;
+        //myhprec->HP[0] = h;
+        psly_record(h);
+        if(Head != h) {
+            psly_remove(h);
+            continue;
+        }
+        NodeType* t = Tail;
+        NodeType* next = h->next;
+        psly_record(next);
+        //myhprec->HP[1] = next;
+        if(Head != h) {
+            psly_remove(h);
+            psly_remove(next);
+            continue;
+        }
+        if(next == NULL) {
+            psly_remove(h);
+            psly_remove(next);
+            return -1000000;    
+        }
+        if((((long) next) & 63) != 0) {
             printf("%p & 63 != 0      0 dequeue %d\n", next, pthread_self());
             fflush(stdout);sleep(10);
             exit(1);
         }
-		if(h == t){
-			psly_remove(h);
-			psly_remove(next);
-			__sync_bool_compare_and_swap(&Tail, t, next);
-			continue;
-		}
-		data = next->value;
-		//myhprec->HP[1] = NULL;
-		//myhprec->HP[0] = NULL;
-		if(__sync_bool_compare_and_swap(&Head, h, next)) {
-			psly_remove(h);
-			psly_remove(next);
-			break;
-		}
-		psly_remove(h);
-		psly_remove(next);	
-	}
-	//myhprec->HP[0] = NULL;
-	//myhprec->HP[1] = NULL;
-	if(flagRet)
-		retireNode(h);	
-	return data;
-}	
+        if(h == t){
+            psly_remove(h);
+            psly_remove(next);
+            __sync_bool_compare_and_swap(&Tail, t, next);
+            continue;
+        }
+        data = next->value;
+        //myhprec->HP[1] = NULL;
+        //myhprec->HP[0] = NULL;
+        if(__sync_bool_compare_and_swap(&Head, h, next)) {
+            psly_remove(h);
+            psly_remove(next);
+            break;
+        }
+        psly_remove(h);
+        psly_remove(next);  
+    }
+    //myhprec->HP[0] = NULL;
+    //myhprec->HP[1] = NULL;
+    if(flagRet)
+        retireNode(h);  
+    return data;
+}   
 
 long numofdequeue;
 long numoferr;
 void* thread_routine(void* argv){
-	allocateHPRec();
-	for(int i = 100; i < 100 + (int)argv; ++i)
-		enqueue(3781);
-	int result;
-	//printf("enqueue end!!! %d\n", pthread_self());
-	while((result = dequeue()) != -1000000){
-		//printf("tid: %ld output is: %d times is: %d\n", pthread_self(), result, numofdequeue + 1);
-		__sync_fetch_and_add(&numofdequeue, 1);
-		if(result != 3781) 
-			__sync_fetch_and_add(&numoferr, 1);	
-	}
-	scan(myhprec);
-	return 0;
+    allocateHPRec();
+    int i = 100;
+    for(; i < 100 + (int)argv; ++i)
+        enqueue(3781);
+    int result;
+    //printf("enqueue end!!! %d\n", pthread_self());
+    while((result = dequeue()) != -1000000){
+        //printf("tid: %ld output is: %d times is: %d\n", pthread_self(), result, numofdequeue + 1);
+        __sync_fetch_and_add(&numofdequeue, 1);
+        if(result != 3781) 
+            __sync_fetch_and_add(&numoferr, 1); 
+    }
+    scan(myhprec);
+    return 0;
 }
 
 int main(int argc, char** argv){
-	time_t current = time(NULL);
-	puts(ctime(&current));	
-	if(argc != 5) {
-		printf("must has 5 arguments\n");
+    time_t current = time(NULL);
+    puts(ctime(&current));  
+    if(argc != 5) {
+        printf("must has 5 arguments\n");
         return 0;
-	}
-	printf("%d threads, %d times/thread, %d iterators\n\n", atoi(argv[1]), atoi(argv[2]), atoi(argv[4]));
-	int exeTime = atoi(argv[4]);
-	struct timeval startInit;
+    }
+    printf("%d threads, %d times/thread, %d iterators\n\n", atoi(argv[1]), atoi(argv[2]), atoi(argv[4]));
+    int exeTime = atoi(argv[4]);
+    struct timeval startInit;
     float time_use=0;
     struct timeval start;
     struct timeval end;
-	gettimeofday(&startInit, NULL);
-	INIT_RESOURCE(131072); 
-	for(int k = 0; k < exeTime;++k){
-	gettimeofday(&start,NULL);
-	printf("\n%d times\n", k);
-	fflush(stdout);
-	//Head = Tail = (NodeType*) malloc(sizeof(NodeType));
-	int re = posix_memalign(&Head, 64, sizeof(NodeType));
-	if(re == ENOMEM || re == EINVAL) {
-		printf("memory has empty!\n");
-		fflush(stdout);
-		exit(1);
-	}
+    gettimeofday(&startInit, NULL);
+    INIT_RESOURCE(131072); 
+    int k = 0;
+    for(; k < exeTime;++k){
+    gettimeofday(&start,NULL);
+    printf("\n%d times\n", k);
+    fflush(stdout);
+    //Head = Tail = (NodeType*) malloc(sizeof(NodeType));
+    int re = posix_memalign(&Head, 64, sizeof(NodeType));
+    if(re == ENOMEM || re == EINVAL) {
+        printf("memory has empty!\n");
+        fflush(stdout);
+        exit(1);
+    }
     if(((long) Head & 63) != 0) {
         printf("%ld is not 64 Head %d\n", Head, pthread_self());
         fflush(stdout);
         exit(1);
     }
 
-	Tail = Head;
-	if(Head == NULL) {printf("AAAAAAAAAAAA\n"); exit(1);}
-	Head->value = -1;
-	Head->next = NULL;
-	int nThread = atoi(argv[1]);
-	MAXTHRES = 10000;
-	int numItem = atoi(argv[2]);
-	THRESHOLD = atoi(argv[3]);
-	printf("\n");
-	pthread_t pid[MAXTHREADS];
-	for(int i = 0; i < nThread; ++i) {
-		if(pthread_create(&pid[i], NULL, thread_routine, numItem)) {
-			printf("can't create %d thread\n", i);	
-			exit(1);
-		}
-	}
-	for(int i = 0; i < nThread; ++i) {
-		if(pthread_join(pid[i], NULL)) {
-			printf("can't join %d thread\n", i);
-			exit(1);
-		}
-	}
-	printf("%ld enqueues + %ld dequeues\n\n", numofdequeue, numofdequeue);
-	HPrecType* h = head;head = NULL;H = 0;
-	HPrecType* l;
-	printf("begin father collect garbage\n");
-	while(h != NULL) {
-		l = h->next;
-		scan(h);
-		free(h->list);
-		free(h);
-		h = l;
-	}
-	free(Head);
-	  int kk = 0;
-	  for(int i = 0; i < 131072; ++i) {
+    Tail = Head;
+    if(Head == NULL) {printf("AAAAAAAAAAAA\n"); exit(1);}
+    Head->value = -1;
+    Head->next = NULL;
+    int nThread = atoi(argv[1]);
+    MAXTHRES = 10000;
+    int numItem = atoi(argv[2]);
+    THRESHOLD = atoi(argv[3]);
+    printf("\n");
+    pthread_t pid[MAXTHREADS];
+    int i = 0;
+    for(; i < nThread; ++i) {
+        if(pthread_create(&pid[i], NULL, thread_routine, numItem)) {
+            printf("can't create %d thread\n", i);  
+            exit(1);
+        }
+    }
+    i = 0;
+    for(; i < nThread; ++i) {
+        if(pthread_join(pid[i], NULL)) {
+            printf("can't join %d thread\n", i);
+            exit(1);
+        }
+    }
+    printf("%ld enqueues + %ld dequeues\n\n", numofdequeue, numofdequeue);
+    HPrecType* h = head;head = NULL;H = 0;
+    HPrecType* l;
+    printf("begin father collect garbage\n");
+    while(h != NULL) {
+        l = h->next;
+        scan(h);
+        free(h->list);
+        free(h);
+        h = l;
+    }
+    free(Head);
+      int kk = 0;
+      i = 0;
+      for(; i < 131072; ++i) {
         Record* head = idx_Record(map.lists[i]->head->nextRecord);
         Record* tail = map.lists[i]->tail;
         while(head != tail) {
-		  printf("%p\n", head->pointer);
+          printf("%p\n", head->pointer);
           ++kk;
           head = idx_Record(head->nextRecord);
         }
-  	  }
+      }
       gettimeofday(&end,NULL);
       time_use=(end.tv_sec-start.tv_sec)+(end.tv_usec-start.tv_usec) / 1000000.0;//微秒
       float timeTotal = (end.tv_sec - startInit.tv_sec) + (end.tv_usec - startInit.tv_usec) / 1000000.0;
       printf("time_use is %fs, err num is %ld \n", time_use, numoferr);
       printf("timeTotal is %fs\n", timeTotal);
-	  printf("the rest: %d\n", kk);
-	  current = time(NULL);
-	  puts(ctime(&current));
-	  fflush(stdout);
-	  //sleep(1);
+      printf("the rest: %d\n", kk);
+      current = time(NULL);
+      puts(ctime(&current));
+      fflush(stdout);
+      //sleep(1);
     }
-	UNINIT_RESOURCE(131072);
-	return 0;
+    UNINIT_RESOURCE(131072);
+    return 0;
 }
-
