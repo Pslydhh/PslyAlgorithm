@@ -535,6 +535,7 @@ impl<'a, T> SelectHandle for Receiver<'a, T> {
     }
 }
 
+
 impl<'a, T> SelectHandle for Sender<'a, T> {
     fn try(&self, _token: &mut Token) -> bool {
         true
